@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import StarRating from "./StarRating";
 import Loader from "./Loader";
 
@@ -9,6 +9,16 @@ function MovieDeteals({ selectedId, onCloseMovie, onAddWatched, watched }) {
   const [movie, setMovie] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [userRating, setUserRating] = useState("");
+
+  const countRef = useRef(0);
+
+  useEffect(
+    function () {
+      if (userRating) countRef.current += 1;
+      // console.log(countRef.current);
+    },
+    [userRating]
+  );
 
   const isWatched = watched.map((movie) => movie.imdbID).includes(selectedId);
   // console.log(isWatched);
@@ -40,7 +50,8 @@ function MovieDeteals({ selectedId, onCloseMovie, onAddWatched, watched }) {
       poster,
       imdbRating: Number(imdbRating),
       runtime: Number(runtime.split(" ").at(0)),
-      userRating
+      userRating,
+      countRatingDecisions: countRef.current
     };
     onAddWatched(newWatchedMovie);
     onCloseMovie();
